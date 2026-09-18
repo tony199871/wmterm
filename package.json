@@ -1,0 +1,91 @@
+{
+  "name": "multi-cmd",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Windows 上的多终端聚合器：一个窗口内标签页 + 可拖拽分屏的终端复用器（tmux 风格）",
+  "main": "dist/main.js",
+  "type": "commonjs",
+  "author": "multi-cmd",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "npm run build && electron .",
+    "dev": "npm run build && electron . --dev",
+    "rebuild": "electron-rebuild -f -w node-pty",
+    "icon": "node scripts/make-icon.mjs",
+    "pack": "node scripts/package.mjs --dir",
+    "dist": "node scripts/package.mjs",
+    "dist:portable": "node scripts/package.mjs --portable",
+    "dist:edit-exe": "node scripts/package.mjs --edit-exe"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-web-links": "^0.11.0",
+    "@xterm/xterm": "^5.5.0",
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.24.0"
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": true,
+    "esbuild": true,
+    "node-pty": true
+  },
+  "build": {
+    "appId": "com.multicmd.app",
+    "productName": "multi-cmd",
+    "copyright": "multi-cmd",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "!dist/**/*.map",
+      "!**/*.md"
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "asarUnpack": [
+      "**/node_modules/node-pty/**"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "executableName": "electron",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "multi-cmd-${version}-portable.exe",
+      "requestExecutionLevel": "user"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "multi-cmd",
+      "uninstallDisplayName": "multi-cmd ${version}",
+      "include": "build/installer.nsh",
+      "artifactName": "multi-cmd-${version}-setup.exe",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}
